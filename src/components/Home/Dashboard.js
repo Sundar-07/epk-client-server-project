@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -15,78 +15,227 @@ import GlobalStyles from "@mui/material/GlobalStyles";
 import Container from "@mui/material/Container";
 import CardMedia from "@mui/material/CardMedia";
 import { Routes, Route } from "react-router-dom";
+import { getAllProperties } from "../../services/builderServices";
+import axios from "axios";
+import { apiUrl } from "../../services/apiUrl";
+import FeaturedHeader from "../Header/FeaturedHeader";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+
+import Form from "react-bootstrap/Form";
 
 function Dashboard() {
   const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const [builders, setBuilders] = useState([]);
 
-  const builders = [
-    {
-      id: 1,
-      builderName: "Lancor builders",
-      price: "4500000",
-      priceSqFt: "2500/sqft",
-      projectDesc:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-    },
-    {
-      id: 2,
-      builderName: "Elroy builders",
-      price: "6500000",
-      priceSqFt: "4500/sqft",
-      projectDesc:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-    },
-    {
-      id: 3,
-      builderName: "Sample builders",
-      price: "7500000",
-      priceSqFt: "6500/sqft",
-      projectDesc:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-    },
-  ];
+  const [location1, setLocation1] = React.useState("");
+  const [property, setProperty] = React.useState("");
+
+  const handleChange = (e) => {
+    setLocation1(e.target.value);
+  };
+
+  const [searchInput, setSearchInput] = useState([]);
+  const [filteredResults, setFilteredResults] = useState([]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    console.log(searchInput);
+    if (searchInput !== "") {
+      const filteredData = builders.filter((item) => {
+        return Object.values(item)
+          .join("")
+          .toLowerCase()
+          .includes(searchInput.toLowerCase());
+      });
+      setFilteredResults(filteredData);
+    } else {
+      setFilteredResults(builders);
+    }
+  };
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const url = "http://localhost:5000/api/v1/builders";
+        await axios.get(url).then((res) => {
+          console.log(res.data);
+          const updatedData = res.data;
+          setBuilders(updatedData);
+        });
+      } catch (error) {
+        console.log("Axios getting error: ", error);
+      }
+    };
+    fetchProperties();
+  }, []);
+
   return (
     <div>
+      <FeaturedHeader />
+      {/* Search Bar */}
+      <form onSubmit={handleSearch}>
+        <Container
+          sx={{ py: 4 }}
+          maxWidth="md"
+          style={{
+            backgroundColor: "#eeeeee",
+            borderRadius: "25px",
+            border: "2px solid #eee",
+          }}
+        >
+          <Grid
+            container
+            spacing={{ xs: 2, md: 3 }}
+            columns={{ xs: 4, sm: 8, md: 12 }}
+          >
+            <Grid item xs={2} sm={4} md={4}>
+              <select
+                className="form-select"
+                aria-label="Default select example"
+              >
+                <option selected>Select City Location</option>
+                {builders.length > 0 ? (
+                  builders.map((builder) => {
+                    return (
+                      <>
+                        <option
+                          key={builder._id}
+                          value={builder.pro_city_location}
+                        >
+                          {builder.pro_area_location}
+                        </option>
+                      </>
+                    );
+                  })
+                ) : (
+                  <>
+                    <option selected>Select City Location</option>
+                    <option>No Records</option>
+                  </>
+                )}
+              </select>
+            </Grid>
+            <Grid item xs={2} sm={4} md={4}>
+              <select
+                className="form-select"
+                aria-label="Default select example"
+                onChange={(e) => setSearchInput(e.target.value)}
+              >
+                <option selected>Select Builders</option>
+                {builders.length > 0 ? (
+                  builders.map((builder) => {
+                    return (
+                      <>
+                        <option key={builder._id} value={builder.property_name}>
+                          {builder.property_name}
+                        </option>
+                      </>
+                    );
+                  })
+                ) : (
+                  <>
+                    <option selected>Select Builders</option>
+                    <option>No Records</option>
+                  </>
+                )}
+              </select>
+            </Grid>
+            <Grid item xs={2} sm={4} md={4}>
+              <Button variant="contained" size="medium" type="submit">
+                Submit
+              </Button>
+            </Grid>
+          </Grid>
+        </Container>
+      </form>
+      {/* Dashboard */}
       <Container sx={{ py: 8 }} maxWidth="md">
         {/* End hero unit */}
-        <Grid container spacing={4}>
-          {builders.map((build) => (
-            <Grid item key={build.id} xs={12} sm={6} md={4}>
-              <Card
-                sx={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image="https://source.unsplash.com/random"
-                  alt="random"
-                />
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography gutterBottom variant="h5" component="h2">
-                    {build.builderName}
-                  </Typography>
-                  <Typography variant="button"><b>{build.priceSqFt}</b></Typography>
-                </CardContent>
-                
-                <Button
-                  size="medium"
-                  style={{ backgroundColor: "#993535" }}
-                  variant="contained"
+        {searchInput && searchInput.length > 0 ? (
+          <Grid container spacing={4}>
+            {filteredResults.map((build) => (
+              <Grid item key={build._id} xs={12} sm={6} md={4}>
+                <Card
+                  sx={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
                 >
-                  View Details
-                </Button>
-                
-                {/* <CardActions>
-                    <Button size="medium" style={{ backgroundColor: "#993535" }} variant="contained">View Details</Button>
-                  </CardActions> */}
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image="https://source.unsplash.com/random"
+                    alt="random"
+                  />
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      {build.property_name}
+                    </Typography>
+                    <Typography variant="button">
+                      <b>{build.price}-Lakhs</b>
+                    </Typography>
+                  </CardContent>
+
+                  <Button
+                    size="medium"
+                    style={{ backgroundColor: "#993535" }}
+                    variant="contained"
+                  >
+                    View Details
+                  </Button>
+
+                  {/* <CardActions>
+                   <Button size="medium" style={{ backgroundColor: "#993535" }} variant="contained">View Details</Button>
+                 </CardActions> */}
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        ) : (
+          <Grid container spacing={4}>
+            {builders.map((build) => (
+              <Grid item key={build._id} xs={12} sm={6} md={4}>
+                <Card
+                  sx={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image="https://source.unsplash.com/random"
+                    alt="random"
+                  />
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      {build.property_name}
+                    </Typography>
+                    <Typography variant="button">
+                      <b>{build.price}-Lakhs</b>
+                    </Typography>
+                  </CardContent>
+
+                  <Button
+                    size="medium"
+                    style={{ backgroundColor: "#993535" }}
+                    variant="contained"
+                  >
+                    View Details
+                  </Button>
+
+                  {/* <CardActions>
+                  <Button size="medium" style={{ backgroundColor: "#993535" }} variant="contained">View Details</Button>
+                </CardActions> */}
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        )}
       </Container>
     </div>
   );

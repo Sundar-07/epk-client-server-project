@@ -7,18 +7,20 @@ import Builders from "./components/Builders/Builders";
 import Adpackage from "./components/Adspackage/Adpackage";
 import ViewDetail from "./components/ViewDetail";
 import FeaturedHeader from "./components/Header/FeaturedHeader";
+import PostPropertyForm from "./components/PostProperty/PostPropertyForm";
 
 function App() {
   return (
     <div>
       <Header />
-
+      {/* <FeaturedHeader /> */}
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="builders" element={<Builders />} />
           <Route path="adspackage" element={<Adpackage />} />
           <Route path="viewdetail" element={<ViewDetail />} />
+          <Route path="post-property" element={<PostPropertyForm />} />
         </Routes>
       </BrowserRouter>
       <Footer />

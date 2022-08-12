@@ -1,12 +1,17 @@
 import React from "react";
+import PropTypes from "prop-types";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
-import Toolbar from "@mui/material/Toolbar";
-import Container from "@mui/material/Container";
-import AppBar from "@mui/material/AppBar";
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Box from '@mui/material/Box';
-
+import Box from "@mui/material/Box";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
 
 function FeaturedHeader() {
   const sections = [
@@ -39,29 +44,71 @@ function FeaturedHeader() {
 
   return (
     <div>
-      
+      <Paper
+        sx={{
+          position: "relative",
+          backgroundColor: "grey.800",
+          color: "#fff",
+          mb: 4,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          backgroundImage: `url("https://source.unsplash.com/random")`,
+        }}
+      >
+        {/* Increase the priority of the hero background image */}
+        {
+          <img
+            style={{ display: "none" }}
+            src="https://source.unsplash.com/random"
+            alt="some image"
+          />
+        }
         <Box
-          sx={{ maxWidth: { xs: 400, sm: 500 }, bgcolor: "background.paper" }}
-        >
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            variant="scrollable"
-            scrollButtons="auto"
-            aria-label="scrollable auto tabs example"
-          >
-            <Tab label="Item One" />
-            <Tab label="Item Two" />
-            <Tab label="Item Three" />
-            <Tab label="Item Four" />
-            <Tab label="Item Five" />
-            <Tab label="Item Six" />
-            <Tab label="Item Seven" />
-          </Tabs>
-        </Box>
-     
+          sx={{
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            right: 0,
+            left: 0,
+            backgroundColor: "rgba(0,0,0,.3)",
+          }}
+        />
+        <Grid container>
+          <Grid item md={6}>
+            <Box
+              sx={{
+                position: "relative",
+                p: { xs: 3, md: 6 },
+                pr: { md: 0 },
+              }}
+            >
+              <Typography
+                component="h1"
+                variant="p"
+                color="inherit"
+                gutterBottom
+                align="center"
+              >
+                Right Property Makes You Great Person!
+              </Typography>
+            </Box>
+           
+          </Grid>
+         
+        </Grid>
+      </Paper>
     </div>
   );
 }
+// FeaturedHeader.propTypes = {
+//   post: PropTypes.shape({
+//     description: PropTypes.string.isRequired,
+//     image: PropTypes.string.isRequired,
+//     imageText: PropTypes.string.isRequired,
+//     linkText: PropTypes.string.isRequired,
+//     title: PropTypes.string.isRequired,
+//   }).isRequired,
+// };
 
 export default FeaturedHeader;
